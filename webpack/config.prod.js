@@ -8,6 +8,9 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "/build"),
         filename: "bundle.js"
+    },,
+    devServer: {
+        historyApiFallback: true,
     },
     resolve: {
         extensions: ['*', '.js', '.jsx', '.json'],
@@ -95,7 +98,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: `public/index.html`,
+            template: `${path.resolve(__dirname, '..')}/src/index.html`,
             filename: 'index.html',
             inject: 'body',
             minify: {
