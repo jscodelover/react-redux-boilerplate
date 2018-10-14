@@ -1,4 +1,4 @@
-# Codebase
+# React-Redux Boilerplate
 
 Stripped down codebase to start the any project.
 
@@ -6,8 +6,6 @@ Stripped down codebase to start the any project.
 
 ```
 .
-├── config                   # All config-related code
-├── lib                      # All third library wrappers and initialization
 ├── public                   # Static public assets (not imported anywhere in source code)
 ├── src                      # Application source code
 │   ├── index.html           # Main HTML page container
