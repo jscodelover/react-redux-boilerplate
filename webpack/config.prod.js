@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('mini-css-extract-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
     entry: './src/main.js',
@@ -10,7 +11,9 @@ module.exports = {
         filename: "bundle.js"
     },,
     devServer: {
+        port: 3001,
         historyApiFallback: true,
+        contentBase: path.resolve(__dirname, '..'),
     },
     resolve: {
         extensions: ['*', '.js', '.jsx', '.json'],
@@ -110,27 +113,28 @@ module.exports = {
             filename: "[name].[hash].css",
             allChucks: true
         }),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new CleanWebpackPlugin(['build']),
     ],
     optimization: {
         splitChunks: {
-        minSize: 30000,
-        minChunks: 1,
-        maxAsyncRequests: 5,
-        maxInitialRequests: 3,
-        automaticNameDelimiter: '~',
-        name: true,
-        cacheGroups: {
-            vendors: {
-            test: /[\\/]node_modules[\\/]/,
-            priority: -10,
+            minSize: 30000,
+            minChunks: 1,
+            maxAsyncRequests: 5,
+            maxInitialRequests: 3,
+            automaticNameDelimiter: '~',
+            name: true,
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10,
+                },
+                default: {
+                    minChunks: 2,
+                    priority: -20,
+                    reuseExistingChunk: true,
+                },
             },
-            default: {
-            minChunks: 2,
-            priority: -20,
-            reuseExistingChunk: true,
-            },
-        },
         },
     },
 };

@@ -12,7 +12,9 @@ module.exports = {
         filename: "bundle.js"
     },
     devServer: {
+        port:3001,
         historyApiFallback: true,
+        contentBase: path.resolve(__dirname, '..'),
     },
     resolve: {
         extensions: ['*', '.js', '.jsx', '.json'],
@@ -117,23 +119,23 @@ module.exports = {
     ],
     optimization: {
         splitChunks: {
-        minSize: 30000,
-        minChunks: 1,
-        maxAsyncRequests: 5,
-        maxInitialRequests: 3,
-        automaticNameDelimiter: '~',
-        name: true,
-        cacheGroups: {
-            vendors: {
-            test: /[\\/]node_modules[\\/]/,
-            priority: -10,
+            minSize: 30000,
+            minChunks: 1,
+            maxAsyncRequests: 5,
+            maxInitialRequests: 3,
+            automaticNameDelimiter: '~',
+            name: true,
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10,
+                },
+                default: {
+                    minChunks: 2,
+                    priority: -20,
+                    reuseExistingChunk: true,
+                },
             },
-            default: {
-            minChunks: 2,
-            priority: -20,
-            reuseExistingChunk: true,
-            },
-        },
         },
     },
 };
