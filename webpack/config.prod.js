@@ -1,140 +1,63 @@
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('mini-css-extract-plugin');
+const path = require("path");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const autoprefixer =  require('autoprefixer');
+
+const base = require('./config.base');
 
 module.exports = {
-    entry: './src/main.js',
+    ...base,
+    entry: `${path.resolve(__dirname, '..')}/src/main.jsx`,
     mode: 'production',
     output: {
-        path: path.resolve(__dirname, "/build"),
+        path: `${path.resolve(__dirname, '..')}/public`,
         filename: "bundle.js"
-    },,
-    devServer: {
-        port: 3001,
-        historyApiFallback: true,
-        contentBase: path.resolve(__dirname, '..'),
-    },
-    resolve: {
-        extensions: ['*', '.js', '.jsx', '.json'],
     },
     module: {
         rules: [
+            ...base.module.rules,
             {
-                test: /\.html?$/,
-                loader: 'html-loader',
-            },
-            {
-                test: /\.jsx?$/,
-                exclude: /(node_modules|bower_components|public\/)/,
-                loader: 'babel-loader',
-            },
-            {
-                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+                test: /\.(sa|sc)ss$/,
                 exclude: /(node_modules|bower_components)/,
-                loader: 'file-loader',
-            },
-            {
-                test: /\.(woff|woff2)$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'url-loader',
-                options: {
-                    prefix: 'font/',
-                    limit: 5000,
-                },
-            },
-            {
-                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'url-loader',
-                options: {
-                    mimetype: 'application/octet-stream',
-                    limit: 10000,
-                },
-            },
-            {
-                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'url-loader',
-                options: {
-                    mimetype: 'application/image/svg+xml',
-                    limit: 10000,
-                },
-            },
-            {
-                test: /\.gif/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'url-loader',
-                options: {
-                    mimetype: 'application/image/gif',
-                    limit: 10000,
-                },
-            },
-            {
-                test: /\.jpg/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'url-loader',
-                options: {
-                    mimetype: 'application/image/jpg',
-                    limit: 10000,
-                },
-            },
-            {
-                test: /\.png/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'url-loader',
-                options: {
-                    mimetype: 'application/image/png',
-                    limit: 10000,
-                },
-            },
-            {
-                test: /\.scss$/,
                 use: [
-                    // fallback to style-loader in development
-                    process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
-                    "css-loader",
+                    MiniCssExtractPlugin.loader,
+                    { 
+                        loader: "css-loader",
+                        options: {
+                            importLoaders: 1
+                        }
+                    },
+                    { 
+                        loader: "postcss-loader",
+                        options: {
+                            ident: "postcss",
+                            plugins: () => [
+                                autoprefixer({
+                                    browsers: [
+                                    "> 1%",
+                                    "last 2 versions"
+                                    ]
+                                })
+                            ]
+                        }
+                    },
                     "sass-loader"
                 ]
             }
         ],
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            template: `${path.resolve(__dirname, '..')}/src/index.html`,
-            filename: 'index.html',
-            inject: 'body',
-            minify: {
-                collapseWhitespace: true,
-                html5: true,
-            },
+        ...base.plugins,
+        new CleanWebpackPlugin(['public'], { 
+            root: path.resolve(__dirname , '..'),
         }),
-        new ExtractTextPlugin({
-            filename: "[name].[hash].css",
-            allChucks: true
-        }),
-        new webpack.HotModuleReplacementPlugin(),
-        new CleanWebpackPlugin(['build']),
-    ],
-    optimization: {
+    ],  optimization: {
+        ...base.optimization,
         splitChunks: {
-            minSize: 30000,
-            minChunks: 1,
-            maxAsyncRequests: 5,
-            maxInitialRequests: 3,
-            automaticNameDelimiter: '~',
-            name: true,
-            cacheGroups: {
-                vendors: {
-                    test: /[\\/]node_modules[\\/]/,
-                    priority: -10,
-                },
-                default: {
-                    minChunks: 2,
-                    priority: -20,
-                    reuseExistingChunk: true,
-                },
-            },
+          ...base.optimization.splitChunks,
+          chunks: 'all',
         },
     },
 };
+

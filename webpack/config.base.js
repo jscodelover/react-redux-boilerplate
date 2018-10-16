@@ -1,20 +1,16 @@
-const webpack = require('webpack');
+const path = require("path");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: './src/main.js',
+    entry: `${path.resolve(__dirname, '..')}/src/main.jsx`,
     output: {
-        path: path.resolve(__dirname, "/build"),
+        path: `${path.resolve(__dirname, '..')}/public`,
         filename: "bundle.js"
-    },
-    devServer: {
-        port: 3001,
-        historyApiFallback: true,
-        contentBase: path.resolve(__dirname, '..'),
     },
     resolve: {
         extensions: ['*', '.js', '.jsx', '.json'],
+        modules: [`${path.resolve(__dirname, '..')}/src`, 'node_modules']
     },
     module: {
         rules: [
@@ -86,15 +82,6 @@ module.exports = {
                     limit: 10000,
                 },
             },
-            {
-                test: /\.scss$/,
-                use: [
-                    // fallback to style-loader in development
-                    process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
-                    "css-loader",
-                    "sass-loader"
-                ]
-            }
         ],
     },
     plugins: [
@@ -107,10 +94,10 @@ module.exports = {
                 html5: true,
             },
         }),
-        new ExtractTextPlugin({
+        new MiniCssExtractPlugin({
             filename: "[name].[hash].css",
-            allChucks: true
-        })
+            allChucks: true,
+        }),
     ],
     optimization: {
         splitChunks: {
